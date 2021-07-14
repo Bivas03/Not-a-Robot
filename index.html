@@ -1,0 +1,128 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body{
+       background-color: whitesmoke;
+        }
+    img{
+     width: 200px;
+     height: 200px;
+    }
+    </style>
+</head>
+<body>
+<img id="first" data-ns-test="img1" onclick="select(this)"/>
+<img id="secoond" data-ns-test="img2" onclick="select(this)"/>
+<img id="third" data-ns-test="img3" onclick="select(this)"/>
+<img id="fourth" data-ns-test="img4" onclick="select(this)"/>
+<img id="fifth" data-ns-test="img5" onclick="select(this)"/>
+<img id="last" onclick="select(this)"/>
+<h3 id="header">Please click on the identical tiles to verify that you are not a robot</h3>
+</body>
+<script>
+var image_array=new Array(5);
+image_array[0]="http://personal.psu.edu/xqz5228/jpg.jpg";
+image_array[1]="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/93a3f507-ce3f-40f3-99f2-1a6a6738bde4/dd5ippd-9a3b267a-8c2a-46bb-a5de-a9eac2344ce7.jpg";
+image_array[2]="https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg";
+image_array[3]="https://sb.kaleidousercontent.com/800x533/c5b0716f3d/animals-0b6addc448f4ace0792ba4023cf06ede8efa67b15e748796ef7765ddeb45a6fb.jpg";
+image_array[4]="https://tinyjpg.com/images/social/website.jpg";
+var lastimage=document.getElementById("last");
+for(var i=0;i<image_array.length;){
+    var image=document.querySelector(`[data-ns-test= img${i+1}]`);
+    var index=Math.floor(Math.random()*image_array.length);
+    if(image_array[index]!="selected"){
+    image.src=image_array[index];
+    image_array[index]="selected";
+    i++;
+    }
+}
+var index=Math.floor(Math.random()*image_array.length);
+var copy=document.body.querySelector(`[data-ns-test= img${index+1}]`);
+lastimage.src=copy.src;
+lastimage.setAttribute("data-ns-test",`img${index+1}`);
+
+var picture1=null;var picture2=null;
+var click_count=0;
+var btnpresent=false; var resetpresent=false;var duplicate=null;var duplicate1=null;
+
+function select(current_image){
+
+ if(picture1==null){
+     click_count++;
+   picture1=current_image.getAttribute("data-ns-test");
+   duplicate=current_image.getAttribute("id");
+ }
+ else{
+     if(current_image.id != duplicate && duplicate1 != current_image.id){
+     click_count++;
+     picture2=current_image.getAttribute("data-ns-test");
+     duplicate1=current_image.getAttribute("id");
+     }
+ }
+
+    if(click_count==1){
+     var header=document.getElementById("header");
+     header.remove();
+     var reset=document.createElement("button");
+     reset.innerHTML="Reset";
+     reset.id="reset";
+     reset.onclick=function(){resetfn();}
+     document.body.appendChild(reset);
+     resetpresent=true;
+    } 
+
+ if(click_count==2){
+    if(!btnpresent){
+    var button=document.createElement(`button`);
+    button.innerHTML="Verify";
+    button.setAttribute("id","btn");
+    button.addEventListener("click",verify);
+    document.body.appendChild(button);
+    btnpresent=true;
+    }
+ }
+ if(click_count>2){
+     document.getElementById("btn").remove();
+     btnpresent=false;
+ }
+}
+
+function verify(){
+  if(resetpresent){
+      document.getElementById("reset").remove();
+  }
+ if(picture1==picture2){
+   var ptag=document.createElement(`h1`);
+   ptag.setAttribute("id","para");
+   ptag.textContent="You are a human. Congratulations!";
+   document.body.appendChild(ptag);
+ }
+ else{
+     var ptag=document.createElement(`h1`);
+     ptag.setAttribute("id","para");
+     ptag.textContent="We can't verify you as a human. You selected the non-identical tiles.";
+     document.body.appendChild(ptag);
+ }
+ btn.remove();
+ btnpresent=false;
+}
+
+function resetfn(){
+ document.getElementById("reset").remove();
+ if(btnpresent){
+   document.getElementById("btn").remove();
+ }
+ click_count=0;
+ picture1=null;
+ picture2=null;
+ var header=document.createElement(`h3`);
+ header.setAttribute("id","header");
+ header.textContent="Please click on the identical tiles to verify that you are not a robot";
+ document.body.appendChild(header);
+}
+</script>
+</html>
